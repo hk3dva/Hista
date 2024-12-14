@@ -34,8 +34,8 @@ class MediaStorageSplit(MediaStorage):
                 # Store metadata
                 media_info = {
                     "filename": chunk_filename,
-                    "original_name": f"{chunk_filename}_{y}_{x}.jpeg" ,
-                    "content_type": "image/jpeg",
+                    "original_name": f"{chunk_filename}_{y}_{x}.png" ,
+                    "content_type": "image/png",
                     "path": chunk_path,
                     "size": os.path.getsize(chunk_path)
                 }
