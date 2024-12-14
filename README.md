@@ -32,7 +32,7 @@ venv\Scripts\activate    # Для Windows
 pip install -r requirements.txt
 
 # Запуск приложения
-python run.py
+python main.py
 ```
 
 ## 🔧 Доступные endpoints
