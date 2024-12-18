@@ -18,6 +18,7 @@ class MediaStorageSplit(MediaStorage):
         media_path = media_info["path"]
         slide = openslide.open_slide(media_path)
         width, height = slide.level_dimensions[0]
+        os.makedirs(os.path.dirname(media_path[:-4]), exist_ok=True)
 
         chunks = []
         for y in range(0, height, chunk_size):
@@ -27,23 +28,25 @@ class MediaStorageSplit(MediaStorage):
                 region = slide.read_region((x, y), 0, (region_width, region_height))
                 region_np = np.array(region)[:, :, :3]  # Exclude alpha channel
                 region_bgr = cv2.cvtColor(region_np, cv2.COLOR_RGBA2BGR)
+
                 chunk_filename = f"{uuid.uuid4()}.png"
-                chunk_path = os.path.join(self.base_path, media_path["filename"][:-4], chunk_filename)
-                cv2.imwrite(chunk_path, region_bgr)
+                chunk_path = os.path.join(media_path[:-4], chunk_filename)
+                os.makedirs(os.path.dirname(chunk_path), exist_ok=True)
+                with open(chunk_path, "wb") as f:
+                    f.write(region_bgr.tobytes())
 
                 # Store metadata
                 media_info = {
                     "filename": chunk_filename,
-                    "original_name": f"{chunk_filename}_{y}_{x}.png" ,
+                    "original_name": f"{chunk_filename[:-4]}_{y}_{x}.png" ,
                     "content_type": "image/png",
                     "path": chunk_path,
                     "size": os.path.getsize(chunk_path)
                 }
+
                 media_id = chunk_filename
                 self.media_registry[media_id] = media_info
                 self.save_media_registry()
-
-                chunks.append(chunk_filename)
-
+                chunks.append(media_id)
 
         return chunks

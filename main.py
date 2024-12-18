@@ -56,4 +56,4 @@ async def delete_media(media_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, port=8000)
+    uvicorn.run(app, port=8001)
