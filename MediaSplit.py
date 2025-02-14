@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import os
 import uuid
+from PIL import Image
 from storage import MediaStorage
 
 
@@ -32,9 +33,10 @@ class MediaStorageSplit(MediaStorage):
                 chunk_filename = f"{uuid.uuid4()}.png"
                 chunk_path = os.path.join(media_path[:-4], chunk_filename)
                 os.makedirs(os.path.dirname(chunk_path), exist_ok=True)
-                with open(chunk_path, "wb") as f:
-                    f.write(region_bgr.tobytes())
 
+                im = Image.fromarray(region_bgr)
+                im.save(chunk_path)
+                
                 # Store metadata
                 media_info = {
                     "filename": chunk_filename,
